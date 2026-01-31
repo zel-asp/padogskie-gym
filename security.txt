@@ -1,0 +1,11 @@
+1. user can't login in 2 device (the other one will automatically logout).
+    - create user_session value, and insert in db after signup and session every login.
+2. define user roles and access control (normal vs admin)
+    - who can have full access(edit, delete, update, insert).
+3. limit the feedback form input to 5 per day to minimize spam.
+4. make sure email is used once per user
+5. password must atleast 8 chars
+6. use sql prepared statement to avoid sql injection
+7. filter the input fields(not yet implemented)
+8. add user login attempts or user_activity (not yet implemented)
+9. added captcha to invalidate login that looks suspicious to avoid spam
