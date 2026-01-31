@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <aside class="sidebar w-64 bg-[#121f2e] p-5 flex flex-col justify-between fixed lg:static z-50">
     <div>
-        <h1 class="text-xl font-bold mb-8 text-center hidden lg:block">Padogskei Wild Gym</h1>
+        <h1 class="text-xl font-bold mb-8 text-center hidden lg:block">User Dashboard</h1>
         <nav class="space-y-3">
             <button class="tab-btn flex items-center w-full px-4 py-3 rounded-lg hover:bg-[#1c2d42] transition-colors"
                 data-target="dashboard">

@@ -11,8 +11,8 @@
         <?php require base_path('view/dashboards/admin/sidebar.php'); ?>
 
         <!-- Main Content -->
-        <div class="flex-1 p-5 ml-0 overflow-y-auto md:ml-64 transition-all duration-300">
-            <div class="flex items-center justify-between mb-6 md:hidden">
+        <div class="flex-1 p-5 ml-0 overflow-y-auto lg:overflow md:ml-64 transition-all duration-300">
+            <div class="flex items-center justify-between mb-6 lg:hidden">
                 <div class="flex items-center gap-3">
                     <button id="mobileMenuButton"
                         class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors">

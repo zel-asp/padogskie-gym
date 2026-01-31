@@ -14,6 +14,7 @@
         @apply flex justify-center items-center;
     }
 
+
     .center-vertical {
         @apply flex items-center;
     }

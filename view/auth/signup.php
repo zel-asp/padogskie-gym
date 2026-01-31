@@ -52,14 +52,15 @@ unset($_SESSION['errors']);
 
                             <div class="flex flex-col mt-3">
                                 <label for="signupEmail" class="text-sm font-medium mb-1">Email*</label>
-                                <input type="email" id="signupEmail" name="email" class="LoginInput" required />
+                                <input type="email" id="signupEmail" name="email" class="LoginInput" minlength="8"
+                                    maxlength="20" required />
                             </div>
 
                             <div class="flex flex-col mb-0">
                                 <label for="loginPassword">Password*</label>
                                 <div class="relative">
                                     <input type="password" id="loginPassword" name="password"
-                                        class="LoginInput pr-10 w-full" required />
+                                        class="LoginInput pr-10 w-full" minlength="8" maxlength="20" required />
                                     <button type="button"
                                         class="absolute right-3 top-4 transform -translate-y-1/2 text-white hover:text-brand transition-colors cursor-pointer text-xs"
                                         id="togglePassword">
@@ -73,13 +74,13 @@ unset($_SESSION['errors']);
                                 <label for="confirm-password" class="text-sm font-medium mb-1">Re-type
                                     Password*</label>
                                 <input type="password" id="signupPasswordConfirm" name="password_confirm"
-                                    class="LoginInput" required />
+                                    class="LoginInput" minlength="8" maxlength="20" required />
                             </div>
 
 
                             <div class="flex items-center gap-2 mt-4">
                                 <input type="checkbox" id="signupTerms" name="terms" class="cursor-pointer accent-brand"
-                                    required />
+                                    required minlength="8" maxlength="20" />
                                 <label for="signupTerms" class="extra cursor-pointer text-xl">
                                     Accept all the <a href="/terms" class="text-sky-500 underline">Terms </a>and
 
