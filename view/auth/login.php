@@ -48,14 +48,17 @@ unset($_SESSION['errors']);
                         <form action="/login" method="POST">
                             <div class="flex flex-col mt-3">
                                 <label for="loginEmail">Email*</label>
-                                <input type="email" id="loginEmail" name="email" class="LoginInput" required />
+                                <input type="email" id="loginEmail" name="email" class="LoginInput" minlength="8"
+                                    maxlength="20" required autocomplete="email" />
                             </div>
 
                             <div class="flex flex-col mb-0">
                                 <label for="loginPassword">Password*</label>
                                 <div class="relative">
                                     <input type="password" id="loginPassword" name="password"
-                                        class="LoginInput pr-10 w-full" required />
+                                        class="LoginInput pr-10 w-full" minlength="8" maxlength="20" required
+                                        autocomplete="current-password">
+
                                     <button type="button"
                                         class="absolute right-3 top-4 transform -translate-y-1/2 text-white hover:text-brand transition-colors cursor-pointer text-xs"
                                         id="togglePassword">
@@ -63,6 +66,8 @@ unset($_SESSION['errors']);
                                     </button>
                                 </div>
                             </div>
+
+                            <div class="cf-turnstile mt-3" data-sitekey="0x4AAAAAACWH4cPoBQCrb7lD"></div>
 
                             <button
                                 class="w-full mt-3 bg-brand p-1 rounded-xl lg:p-2 hover:bg-white hover:text-brand cursor-pointer"
@@ -88,6 +93,7 @@ unset($_SESSION['errors']);
             </div>
         </div>
 
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         <script src="assets/js/script.js"></script>
     </body>
 
