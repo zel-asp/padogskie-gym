@@ -13,7 +13,7 @@
 
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg offer-card">
                 <div class="h-48 overflow-hidden">
-                    <img src="assets/imgs/offer2.png" alt="Personal Training" class="w-full h-full object-cover">
+                    <img src="assets/imgs/offer2.png" alt="Personal Training" class="w-full h-full object-fit">
                 </div>
                 <div class="p-6">
                     <h3 class="text-xl font-bold mb-5">₱<?= htmlspecialchars($plan['Basic']) ?>/15 Days</h3>
@@ -30,7 +30,7 @@
 
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg offer-card">
                 <div class="h-48 overflow-hidden">
-                    <img src="assets/imgs/offer3.png" alt="Open 24/7" class="w-full h-full object-cover">
+                    <img src="assets/imgs/offer3.png" alt="Open 24/7" class="w-full h-full object-fit">
                 </div>
                 <div class="p-6">
                     <h3 class="text-xl font-bold mb-5">₱<?= htmlspecialchars($plan['Regular']) ?>/Monthly</h3>
@@ -47,7 +47,7 @@
 
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg offer-card">
                 <div class="h-48 overflow-hidden">
-                    <img src="assets/imgs/offer1.png" alt="Nutrition Planning" class="w-full h-full object-cover">
+                    <img src="assets/imgs/offer1.png" alt="Nutrition Planning" class="w-full h-full object-fit">
                 </div>
                 <div class="p-6">
                     <h3 class="text-xl font-bold mb-5">₱<?= htmlspecialchars($plan['Premium']) ?>/3 Months</h3>
