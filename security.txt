@@ -7,5 +7,6 @@
 5. password must atleast 8 chars
 6. use sql prepared statement to avoid sql injection
 7. filter the input fields(not yet implemented)
-8. add user login attempts or user_activity (not yet implemented)
+8. add user login attempts or user_activity to view (not yet implemented)
 9. added captcha to invalidate login that looks suspicious to avoid spam
+10. disable the login btn after 3 error attempts for 30 seconds
