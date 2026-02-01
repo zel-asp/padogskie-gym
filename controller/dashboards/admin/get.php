@@ -195,16 +195,23 @@ $lockedToday = $lockedTodayResult['total'] ?? 0;
  * -------------------------------------------------
  */
 
-$windowsSummary = $db->query(
-    "SELECT
-    ll.*,
-    (SELECT COUNT(*) FROM login_logs WHERE status = 'success') AS total_success,
-    (SELECT COUNT(*) FROM login_logs WHERE status = 'error') AS total_error,
-    (SELECT COUNT(*) FROM login_logs WHERE account_status = 'locked') AS total_locked
-FROM login_logs ll
-ORDER BY ll.created_at DESC
-"
-)->find();
+$deviceSummary = $db->query("
+    SELECT
+        CASE
+            WHEN user_agent LIKE '%Windows%' THEN 'Windows'
+            WHEN user_agent LIKE '%Linux%' THEN 'Linux'
+            WHEN user_agent LIKE '%Mac%' OR user_agent LIKE '%OS X%' THEN 'macOS'
+            WHEN user_agent LIKE '%Android%' THEN 'Android'
+            ELSE 'Other'
+        END AS device,
+
+        COUNT(*) AS total_logs,
+        SUM(status = 'success') AS total_success,
+        SUM(status = 'error') AS total_error,
+        SUM(account_status = 'locked') AS total_locked
+    FROM login_logs
+    GROUP BY device
+")->find();
 
 /**
  * -------------------------------------------------
@@ -325,7 +332,7 @@ view_path('dashboards/admin', 'index.php', [
     'failedPercentage' => $failedPercentage,
     'lockedAccounts' => $lockedAccounts,
     'lockedToday' => $lockedToday,
-    'windowsSummary' => $windowsSummary,
+    'deviceSummary' => $deviceSummary,
     'chartLabels' => $chartLabels,
     'chartSuccess' => $chartSuccess,
     'chartError' => $chartError,
