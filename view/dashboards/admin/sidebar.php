@@ -57,17 +57,17 @@
         <li class="mb-1">
             <a href="#"
                 class="nav-link flex items-center p-3 rounded-lg text-gray-100 hover:bg-gray-700 hover:text-brand transition-all duration-300"
-                data-page="settings">
-                <i class="fas fa-cog mr-3 text-lg"></i>
-                <span>Settings</span>
+                data-page="userlogs">
+                <i class="fas fa-shield-alt mr-3 text-lg"></i>
+                <span>Logs</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="#"
                 class="nav-link flex items-center p-3 rounded-lg text-gray-100 hover:bg-gray-700 hover:text-brand transition-all duration-300"
-                data-page="userlogs">
+                data-page="settings">
                 <i class="fas fa-cog mr-3 text-lg"></i>
-                <span>Logs</span>
+                <span>Settings</span>
             </a>
         </li>
         <a href="/">
