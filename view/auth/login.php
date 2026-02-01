@@ -1,7 +1,5 @@
 <?php
 
-
-
 $errors = $_SESSION['errors'] ?? [];
 
 unset($_SESSION['errors']);
@@ -49,7 +47,7 @@ unset($_SESSION['errors']);
                             <div class="flex flex-col mt-3">
                                 <label for="loginEmail">Email*</label>
                                 <input type="email" id="loginEmail" name="email" class="LoginInput" minlength="8"
-                                    maxlength="20" required autocomplete="email" />
+                                    maxlength="50" required autocomplete="email" />
                             </div>
 
                             <div class="flex flex-col mb-0">
@@ -60,7 +58,7 @@ unset($_SESSION['errors']);
                                         autocomplete="current-password">
 
                                     <button type="button"
-                                        class="absolute right-3 top-4 transform -translate-y-1/2 text-white hover:text-brand transition-colors cursor-pointer text-xs"
+                                        class="absolute right-3 top-4 transform -translate-y-1/2 text-black hover:text-brand transition-colors cursor-pointer text-xs"
                                         id="togglePassword">
                                         <i class="fa-regular fa-eye" id="eyeIcon"></i>
                                     </button>
@@ -71,7 +69,7 @@ unset($_SESSION['errors']);
 
                             <button
                                 class="w-full mt-3 bg-brand p-1 rounded-xl lg:p-2 hover:bg-white hover:text-brand cursor-pointer"
-                                name="login">
+                                name="login" id="LogInBtn">
                                 Login
                             </button>
 
@@ -95,6 +93,7 @@ unset($_SESSION['errors']);
 
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         <script src="assets/js/script.js"></script>
+        <script src="assets/js/apiLogin.js"></script>
     </body>
 
 </html>
