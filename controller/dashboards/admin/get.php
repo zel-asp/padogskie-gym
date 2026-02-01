@@ -83,7 +83,8 @@ $paymentQuery = "
         p.payment_method,
         p.status,
         p.membership_status,
-        p.payment_date
+        p.payment_date,
+        p.expiration_date
     FROM payments p
     LEFT JOIN users u ON p.user_id = u.id
     WHERE 1
