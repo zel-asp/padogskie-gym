@@ -93,7 +93,7 @@
                                 <?= htmlspecialchars(date('M d, Y', strtotime($record['payment_date']))); ?>
                             </td>
                             <td class="p-3 border-b border-gray-700 whitespace-nowrap">
-                                <?= htmlspecialchars(date('M d, Y', strtotime($record['membership_status']))); ?>
+                                <?= htmlspecialchars(date('M d, Y', strtotime($record['expiration_date']))); ?>
                             </td>
                             <td class="p-3 border-b border-gray-700">
                                 <?php
