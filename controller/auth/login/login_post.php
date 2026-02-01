@@ -2,7 +2,6 @@
 
 use Core\Database;
 
-
 $config = require base_path('config/config.php');
 $db = new Database($config['database']);
 
@@ -14,7 +13,12 @@ if (isset($_POST['login'])) {
     $captchaResponse = $_POST['cf-turnstile-response'] ?? '';
     $errors = [];
 
-    // Check CAPTCHA first
+    $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN';
+    $maxAttempts = 3;
+    $attemptWindow = 30;
+
+    // ---------- CAPTCHA CHECK ----------
     if (empty($captchaResponse)) {
         $errors[] = 'Please complete the CAPTCHA.';
     } else {
@@ -26,7 +30,7 @@ if (isset($_POST['login'])) {
                 'content' => http_build_query([
                     'secret' => $secretKey,
                     'response' => $captchaResponse,
-                    'remoteip' => $_SERVER['REMOTE_ADDR']
+                    'remoteip' => $ipAddress
                 ]),
             ],
         ]));
@@ -36,9 +40,42 @@ if (isset($_POST['login'])) {
         }
     }
 
-
+    // ---------- EMPTY FIELD CHECK ----------
     if (empty($email) || empty($password)) {
         $errors[] = 'Please fill in all fields.';
+    }
+
+    // ---------- CHECK FAILED ATTEMPTS ----------
+    $stmtAttempts = $db->query(
+        "SELECT COUNT(*) AS failed_count 
+        FROM login_logs 
+        WHERE email = ? 
+        AND status = 'error' 
+        AND created_at > (NOW() - INTERVAL ? SECOND)",
+        [$email, $attemptWindow]
+    );
+    $attemptData = $stmtAttempts->fetch_one();
+    $failedAttempts = $attemptData['failed_count'] ?? 0;
+
+    if ($failedAttempts >= $maxAttempts) {
+        $errors[] = "Too many failed login attempts. Please try again after {$attemptWindow} seconds.";
+
+        $db->query(
+            "INSERT INTO login_logs (user_id, email, status, is_success, message, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [
+                null,
+                $email,
+                'error',
+                0,
+                'Blocked due to too many failed attempts',
+                $ipAddress,
+                $userAgent
+            ]
+        );
+
+        $_SESSION['errors'] = $errors;
+        header('Location: /login');
+        exit();
     }
 
 
@@ -48,16 +85,28 @@ if (isset($_POST['login'])) {
             $user = $stmt->fetch_one();
 
             if ($user && password_verify($password, $user['password'])) {
-
+                // Generate session token
                 $sessionToken = bin2hex(random_bytes(32));
-
                 $db->query('UPDATE users SET session_token = ? WHERE id = ?', [
                     $sessionToken,
                     $user['id']
                 ]);
 
+                // Log success
+                $db->query(
+                    "INSERT INTO login_logs (user_id, email, status, is_success, message, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    [
+                        $user['id'],
+                        $email,
+                        'success',
+                        1,
+                        'Login successful',
+                        $ipAddress,
+                        $userAgent
+                    ]
+                );
 
-
+                // Set session
                 if ($user['id'] === 1 && $user['email'] === 'admin_padogskie@gmail.com') {
                     $_SESSION['admin'] = [
                         'logged_in' => true,
@@ -77,23 +126,33 @@ if (isset($_POST['login'])) {
                         'email' => $user['email'],
                         'token' => $sessionToken
                     ];
-
                     header('Location: /userdashboard');
                 }
 
                 exit();
-
             } else {
                 $errors[] = 'Invalid email or password.';
+
+                // Log failed attempt
+                $db->query(
+                    "INSERT INTO login_logs (user_id, email, status, is_success, message, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    [
+                        $user['id'] ?? null,
+                        $email,
+                        'error',
+                        0,
+                        'Invalid credentials',
+                        $ipAddress,
+                        $userAgent
+                    ]
+                );
             }
         } catch (Throwable $th) {
             $errors[] = 'Database error: ' . $th->getMessage();
         }
-
-
     }
 
-    // store errors and redirect back
+    // ---------- STORE ERRORS AND REDIRECT ----------
     $_SESSION['errors'] = $errors;
     header('Location: /login');
     exit();
