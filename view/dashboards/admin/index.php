@@ -39,6 +39,8 @@
             <!-- Settings Page -->
             <?php require base_path('view/dashboards/admin/setting.php'); ?>
 
+            <?php require base_path('view/dashboards/admin/logs.php'); ?>
+
         </div>
 
         <script src="assets/js/adminDashboard.js"></script>
