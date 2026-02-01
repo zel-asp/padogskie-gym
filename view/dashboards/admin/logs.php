@@ -54,48 +54,67 @@
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-lg font-semibold">Device & Browser Summary</h2>
             </div>
-
-
             <!-- User Agent Summary -->
             <div class="bg-gray-800 p-5 rounded-xl mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Windows Summary -->
-                    <?php foreach ($windowsSummary as $devices): ?>
+                    <?php foreach ($deviceSummary as $device): ?>
                         <div class="bg-gray-900 p-4 rounded-lg">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                                    <i class="fab fa-windows text-blue-400"></i>
+                                    <?php if ($device['device'] === 'Windows'): ?>
+                                        <i class="fab fa-windows text-blue-400"></i>
+                                    <?php elseif ($device['device'] === 'Linux'): ?>
+                                        <i class="fab fa-linux text-orange-400"></i>
+                                    <?php elseif ($device['device'] === 'macOS'): ?>
+                                        <i class="fab fa-apple text-gray-300"></i>
+                                    <?php elseif ($device['device'] === 'Android'): ?>
+                                        <i class="fab fa-android text-green-400"></i>
+                                    <?php else: ?>
+                                        <i class="fas fa-question text-gray-400"></i>
+                                    <?php endif; ?>
                                 </div>
+
                                 <div>
-                                    <h3 class="font-medium">Windows</h3>
-                                    <p class="text-gray-400 text-sm">Chrome, Firefox, Edge</p>
+                                    <h3 class="font-medium"><?= htmlspecialchars($device['device']) ?></h3>
+                                    <p class="text-gray-400 text-sm">Detected device</p>
                                 </div>
                             </div>
+
                             <div class="space-y-2">
                                 <div class="flex justify-between text-sm">
                                     <span class="text-green-400">Successful logs:</span>
-                                    <span class="font-medium">
-                                        <?= htmlspecialchars($devices['total_success']) ?>
-                                    </span>
+                                    <span class="font-medium"><?= (int) $device['total_success'] ?></span>
                                 </div>
+
                                 <div class="flex justify-between text-sm">
                                     <span class="text-red-400">Error logs:</span>
-                                    <span class="font-medium">
-                                        <?= number_format($devices['total_error'] ?? 0) ?>
-                                    </span>
+                                    <span class="font-medium"><?= (int) $device['total_error'] ?></span>
                                 </div>
+
                                 <div class="flex justify-between text-sm">
                                     <span class="text-yellow-400">Locked attempts:</span>
-                                    <span class="font-medium">
-                                        <?= number_format($devices['total_locked'] ?? 0) ?>
-                                    </span>
+                                    <span class="font-medium"><?= (int) $device['total_locked'] ?></span>
                                 </div>
+                                <hr>
+                                <form action="#">
+                                    <div class="flex justify-end mt-5">
+                                        <input type="hidden" value="<?= htmlspecialchars($devices['user_agent']) ?>">
+                                        <input type="hidden" name="__method" value="DELETE">
+                                        <button type="submit"
+                                            class="flex items-center gap-1 text-xs bg-red-500 p-2 rounded-lg cursor-pointer">
+                                            <i class="fa fa-trash"></i> Ban Device
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
+
                         </div>
                     <?php endforeach; ?>
+
                 </div>
             </div>
         </div>
+
 
         <!-- Bar Graph with Chart.js -->
         <div class="bg-gray-800 p-5 rounded-xl mb-8">
