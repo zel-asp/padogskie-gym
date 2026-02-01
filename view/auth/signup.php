@@ -53,7 +53,7 @@ unset($_SESSION['errors']);
                             <div class="flex flex-col mt-3">
                                 <label for="signupEmail" class="text-sm font-medium mb-1">Email*</label>
                                 <input type="email" id="signupEmail" name="email" class="LoginInput" minlength="8"
-                                    maxlength="20" required />
+                                    maxlength="50" required />
                             </div>
 
                             <div class="flex flex-col mb-0">
