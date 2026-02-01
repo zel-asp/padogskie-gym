@@ -54,11 +54,11 @@ $query = "
         p.payment_date
     FROM users u
     LEFT JOIN payments p ON u.id = p.user_id
-      AND p.payment_date = (
-          SELECT MAX(p2.payment_date)
-          FROM payments p2
-          WHERE p2.user_id = u.id
-      )
+    AND p.payment_date = (
+        SELECT MAX(p2.payment_date)
+        FROM payments p2
+        WHERE p2.user_id = u.id
+    )
 ";
 
 $params = [];
@@ -142,6 +142,171 @@ $info = $db->query('SELECT * FROM admininfo WHERE id = ?', [1])->fetch_one();
 $announcements = $db->query('SELECT * FROM announcements')->find();
 
 
+
+
+/**
+ * -------------------------------------------------
+ * 1STATS OVERVIEW (Last 30 days)
+ * -------------------------------------------------
+ */
+
+$totalLoginsResult = $db->query(
+    "SELECT COUNT(*) AS total
+    FROM login_logs
+    WHERE status = 'success' AND created_at >= NOW() - INTERVAL 30 DAY"
+)->find();
+
+$totalLogins = $totalLoginsResult[0]['total'] ?? 0;
+
+// Failed attempts
+$failedLoginsResult = $db->query(
+    "SELECT COUNT(*) AS total
+    FROM login_logs
+    WHERE status = 'error'
+    AND created_at >= NOW() - INTERVAL 30 DAY"
+)->find();
+$failedLogins = $failedLoginsResult[0]['total'] ?? 0;
+
+// Locked accounts
+$lockedAccountsResult = $db->query(
+    "SELECT COUNT(*) AS total
+    FROM login_logs
+    WHERE account_status = 'locked'
+    AND created_at >= NOW() - INTERVAL 30 DAY"
+)->find();
+$lockedAccounts = $lockedAccountsResult[0]['total'] ?? 0;
+
+// Failed percentage
+$failedPercentage = $totalLogins > 0 ? round(($failedLogins / $totalLogins) * 100) : 0;
+
+// Locked today (new locked accounts today)
+$lockedTodayResult = $db->query(
+    "SELECT COUNT(*) AS total
+    FROM login_logs
+    WHERE account_status = 'locked'
+    AND DATE(created_at) = CURDATE()"
+)->find();
+$lockedToday = $lockedTodayResult['total'] ?? 0;
+
+
+/**
+ * -------------------------------------------------
+ * 2️DEVICE & BROWSER SUMMARY (Windows)
+ * -------------------------------------------------
+ */
+
+$windowsSummary = $db->query(
+    "SELECT
+    ll.*,
+    (SELECT COUNT(*) FROM login_logs WHERE status = 'success') AS total_success,
+    (SELECT COUNT(*) FROM login_logs WHERE status = 'error') AS total_error,
+    (SELECT COUNT(*) FROM login_logs WHERE account_status = 'locked') AS total_locked
+FROM login_logs ll
+ORDER BY ll.created_at DESC
+"
+)->find();
+
+/**
+ * -------------------------------------------------
+ * BAR CHART – LAST 7 DAYS
+ * -------------------------------------------------
+ */
+
+$chartData = $db->query(
+    "SELECT
+        DATE(created_at) AS log_date,
+        SUM(status = 'success') AS success,
+        SUM(status = 'error') AS error,
+        SUM(account_status = 'locked') AS locked
+    FROM login_logs
+    WHERE created_at >= CURDATE() - INTERVAL 6 DAY
+    GROUP BY log_date
+    ORDER BY log_date ASC"
+)->find();
+
+// Prepare chart data
+$chartLabels = [];
+$chartSuccess = [];
+$chartError = [];
+$chartLocked = [];
+
+foreach ($chartData as $day) {
+    $date = new DateTime($day['log_date']);
+    $chartLabels[] = $date->format('D'); // Short day name
+    $chartSuccess[] = $day['success'] ?? 0;
+    $chartError[] = $day['error'] ?? 0;
+    $chartLocked[] = $day['locked'] ?? 0;
+}
+
+// find date range for display
+$firstDate = !empty($chartData) ? new DateTime($chartData[0]['log_date']) : new DateTime();
+$lastDate = !empty($chartData) ? new DateTime(end($chartData)['log_date']) : new DateTime();
+$dateRange = $firstDate->format('M j') . ' - ' . $lastDate->format('M j');
+
+$recentLogs = $db->query(
+    "SELECT
+        l.id,
+        u.email,
+        u.id AS user_id,
+        l.status,
+        l.account_status,
+        l.message,
+        l.user_agent,
+        l.ip_address,
+        l.created_at
+    FROM login_logs l
+    LEFT JOIN users u ON u.id = l.user_id
+    ORDER BY l.created_at DESC
+    LIMIT 20"
+)->find();
+
+// Process recent logs for display
+$processedLogs = [];
+foreach ($recentLogs as $log) {
+    $log['display_email'] = $log['email'] ?? 'unknown@system.com';
+    $log['user_id_display'] = $log['user_id'] ? 'ID: ' . str_pad($log['user_id'], 3, '0', STR_PAD_LEFT) : 'Unknown';
+    $log['time_ago'] = timeAgo($log['created_at']);
+    $log['time_formatted'] = date('H:i:s', strtotime($log['created_at']));
+    $log['device_info'] = parseUserAgent($log['user_agent']);
+
+    $processedLogs[] = $log;
+}
+
+function timeAgo($datetime)
+{
+    $time = strtotime($datetime);
+    $now = time();
+    $diff = $now - $time;
+
+    if ($diff < 60)
+        return 'Just now';
+    if ($diff < 3600)
+        return floor($diff / 60) . ' min ago';
+    if ($diff < 86400)
+        return floor($diff / 3600) . ' hours ago';
+    if ($diff < 604800)
+        return floor($diff / 86400) . ' days ago';
+    return date('M j, Y', $time);
+}
+
+function parseUserAgent($userAgent)
+{
+    if (stripos($userAgent, 'Windows') !== false) {
+        return ['os' => 'Windows', 'browser' => 'Chrome/Firefox/Edge', 'icon' => 'fab fa-windows', 'color' => 'blue-400'];
+    } elseif (stripos($userAgent, 'Linux') !== false) {
+        return ['os' => 'Linux', 'browser' => 'Firefox', 'icon' => 'fab fa-linux', 'color' => 'orange-400'];
+    } elseif (stripos($userAgent, 'Mac') !== false || stripos($userAgent, 'OS X') !== false) {
+        return ['os' => 'macOS', 'browser' => 'Safari', 'icon' => 'fab fa-apple', 'color' => 'gray-400'];
+    } elseif (stripos($userAgent, 'Android') !== false) {
+        return ['os' => 'Android', 'browser' => 'Mobile', 'icon' => 'fab fa-android', 'color' => 'green-400'];
+    } elseif (stripos($userAgent, 'Python') !== false || stripos($userAgent, 'curl') !== false) {
+        return ['os' => 'Script', 'browser' => 'Python Script', 'icon' => 'fas fa-robot', 'color' => 'red-400'];
+    } else {
+        return ['os' => 'Unknown', 'browser' => 'Unknown', 'icon' => 'fas fa-question', 'color' => 'gray-400'];
+    }
+}
+
+
 view_path('dashboards/admin', 'index.php', [
     'userCount' => $userCount,
     'totalPayments' => $totalPayments,
@@ -154,5 +319,17 @@ view_path('dashboards/admin', 'index.php', [
     'allFeedback' => $allFeedback,
     'info' => $info,
     'plan' => $plan,
-    'announcements' => $announcements
+    'announcements' => $announcements,
+    'totalLogins' => $totalLogins,
+    'failedLogins' => $failedLogins,
+    'failedPercentage' => $failedPercentage,
+    'lockedAccounts' => $lockedAccounts,
+    'lockedToday' => $lockedToday,
+    'windowsSummary' => $windowsSummary,
+    'chartLabels' => $chartLabels,
+    'chartSuccess' => $chartSuccess,
+    'chartError' => $chartError,
+    'chartLocked' => $chartLocked,
+    'dateRange' => $dateRange,
+    'recentLogs' => $processedLogs
 ]);
