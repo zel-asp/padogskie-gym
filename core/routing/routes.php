@@ -5,6 +5,7 @@
 // ];
 
 $router->get('/', 'controller/home/index.controller.php');
+$router->get('/api/user_logs', 'controller/api/user_logs.php');
 
 $router->get('/signup', 'controller/auth/signup/signup.php');
 $router->post('/signup', 'controller/auth/signup/signup_post.php');
