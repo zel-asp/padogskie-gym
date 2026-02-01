@@ -15,6 +15,8 @@ if (isset($_POST['register'])) {
     $password = $_POST['password'];
     $confirm_password = $_POST['password_confirm'];
     $terms = isset($_POST['terms']) ? 1 : 0;
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN';
+
 
     // Validate inputs
     if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
@@ -64,12 +66,13 @@ if (isset($_POST['register'])) {
 
             // Insert new user
             $db->query(
-                'INSERT INTO users (username, email, password, terms_accepted) VALUES (?, ?, ?, ?)',
+                'INSERT INTO users (username, email, password, terms_accepted, user_agent) VALUES (?, ?, ?, ?, ?)',
                 [
                     $username,
                     $email,
                     $hash_password,
-                    $terms
+                    $terms,
+                    $userAgent
                 ]
             );
 
