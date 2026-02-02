@@ -24,8 +24,8 @@ if (isset($_POST['save'])) {
         try {
             $db->query(
                 "UPDATE admininfo 
-                 SET gym_name = ?, name = ?, email = ?, phone = ?, address = ? 
-                 WHERE id = 1",
+                SET gym_name = ?, name = ?, email = ?, phone = ?, address = ? 
+                WHERE id = 1",
                 [$gymName, $ownerName, $email, $phone, $address]
             );
 
