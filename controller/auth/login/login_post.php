@@ -7,6 +7,7 @@ $db = new Database($config['database']);
 
 $errors = [];
 
+
 if (isset($_POST['login'])) {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
@@ -38,6 +39,17 @@ if (isset($_POST['login'])) {
         if (!$responseData->success) {
             $errors[] = 'CAPTCHA verification failed. Please try again.';
         }
+    }
+
+    $isDeviceLocked = $db->query(
+        "SELECT device 
+    FROM locked_devices 
+    WHERE device = ? AND status = 'locked'",
+        [$userAgent]
+    )->find();
+
+    if ($isDeviceLocked) {
+        $errors[] = 'Login Denied, Your device is locked';
     }
 
     // ---------- EMPTY FIELD CHECK ----------
