@@ -15,7 +15,7 @@
 
             <!-- Introduction -->
             <div class="bg-white rounded-lg shadow-sm p-6 mb-8 border border-gray-200">
-                <p class="mb-4 text-lg">At <span class="font-semibold text-orange-500">Padogskei Wild Gym</span>, we are
+                <p class="mb-4 text-lg">At <span class="font-semibold text-orange-500">Iron Pulse Fitness</span>, we are
                     committed to protecting your privacy and ensuring the security of your personal information.</p>
                 <p class="text-gray-600">This Privacy Policy explains how we collect, use, disclose, and safeguard your
                     information when you use our services, website, and facilities in compliance with the Philippine
@@ -342,7 +342,7 @@
                         <ul class="list-disc pl-5 space-y-1">
                             <li><strong>Email:</strong> <a href="mailto:privacy@padogskeigym.com"
                                     class="text-blue-500 hover:underline">privacy@padogskeigym.com</a></li>
-                            <li><strong>Address:</strong> Padogskei Wild Gym, Caloocan City, Philippines</li>
+                            <li><strong>Address:</strong> Iron Pulse Fitness, Caloocan City, Philippines</li>
                             <li><strong>Phone:</strong>+63 912 345 6789</li>
                         </ul>
                     </div>
