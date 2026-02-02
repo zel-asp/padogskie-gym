@@ -300,7 +300,7 @@
                     {
                         label: 'Locked',
                         data: <?= json_encode(array_column($chartLocked, 'count')) ?>,
-                        backgroundColor: '#f59e0b', // Yellow
+                        backgroundColor: '#f59e0b',
                         borderColor: '#f59e0b',
                         borderWidth: 1,
                         borderRadius: 4,
