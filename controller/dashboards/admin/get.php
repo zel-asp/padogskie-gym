@@ -308,7 +308,6 @@ function parseUserAgent($userAgent)
     }
 }
 
-// Locked devices total count
 // Locked devices count by date
 $chartLocked = $db->query("
     SELECT 
