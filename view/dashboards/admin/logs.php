@@ -292,7 +292,7 @@
                     {
                         label: 'Failed',
                         data: <?= json_encode($chartError) ?>,
-                        backgroundColor: '#ef4444', // Red
+                        backgroundColor: '#ef4444',
                         borderColor: '#ef4444',
                         borderWidth: 1,
                         borderRadius: 4,
