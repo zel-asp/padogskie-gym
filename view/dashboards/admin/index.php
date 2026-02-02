@@ -18,7 +18,7 @@
                         class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors">
                         <i class="fas fa-bars text-lg"></i>
                     </button>
-                    <h1 class="text-xl font-bold">Padogskei Wild Gym</h1>
+                    <h1 class="text-xl font-bold">Iron Pulse Fitness</h1>
                 </div>
             </div>
 
