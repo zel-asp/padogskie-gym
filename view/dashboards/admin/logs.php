@@ -284,7 +284,7 @@
                     {
                         label: 'Successful',
                         data: <?= json_encode($chartSuccess) ?>,
-                        backgroundColor: '#3b82f6', // Blue
+                        backgroundColor: '#3b82f6',
                         borderColor: '#3b82f6',
                         borderWidth: 1,
                         borderRadius: 4,
