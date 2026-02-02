@@ -7,6 +7,9 @@
 $router->get('/', 'controller/home/index.controller.php');
 $router->get('/api/user_logs', 'controller/api/user_logs.php');
 
+$router->post('/postDevice', 'controller/dashboards/admin/postDevice.php');
+$router->patch('/updateStatus', 'controller/dashboards/admin/updateStatus.php');
+
 $router->get('/signup', 'controller/auth/signup/signup.php');
 $router->post('/signup', 'controller/auth/signup/signup_post.php');
 
