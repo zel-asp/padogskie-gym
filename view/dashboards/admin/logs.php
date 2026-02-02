@@ -39,21 +39,48 @@
             <div class="bg-gray-800 p-5 rounded-xl">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-gray-400 text-sm">Locked Device</p>
-                        <p class="text-3xl font-bold mt-2"><?= number_format($lockedAccounts) ?></p>
+                        <p class="text-gray-400 text-sm">Locked Devices</p>
+                        <p class="text-3xl font-bold mt-2"><?= number_format($lockedDevice) ?></p>
                     </div>
                     <div class="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                         <i class="fas fa-lock text-yellow-400 text-xl"></i>
                     </div>
                 </div>
-                <p class="text-yellow-400 text-sm mt-4"><?= $lockedToday ?> new today</p>
+                <p class="text-yellow-400 text-sm mt-4"><?= number_format($newToday) ?> new today</p>
             </div>
+
         </div>
 
         <div class="bg-gray-800 p-5 rounded-xl mb-8">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-lg font-semibold">Device & Browser Summary</h2>
             </div>
+
+            <?php if (!empty($_SESSION['DeviceSuccess'])): ?>
+                <div class="mb-4 p-4 bg-green-100 border border-greeb-400 text-green-700 rounded">
+                    <ul class="list-disc list-inside">
+                        <?php foreach ($_SESSION['DeviceSuccess'] as $success): ?>
+                            <li>
+                                <?= htmlspecialchars($success) ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <?php unset($_SESSION['DeviceSuccess']); ?>
+            <?php endif; ?>
+
+            <?php if (!empty($_SESSION['DeviceError'])): ?>
+                <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                    <ul class="list-disc list-inside">
+                        <?php foreach ($_SESSION['DeviceError'] as $error): ?>
+                            <li>
+                                <?= htmlspecialchars($error) ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <?php unset($_SESSION['DeviceError']); ?>
+            <?php endif; ?>
             <!-- User Agent Summary -->
             <div class="bg-gray-800 p-5 rounded-xl mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -61,21 +88,13 @@
                         <div class="bg-gray-900 p-4 rounded-lg">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                                    <?php if ($device['device'] === 'Windows'): ?>
-                                        <i class="fab fa-windows text-blue-400"></i>
-                                    <?php elseif ($device['device'] === 'Linux'): ?>
-                                        <i class="fab fa-linux text-orange-400"></i>
-                                    <?php elseif ($device['device'] === 'macOS'): ?>
-                                        <i class="fab fa-apple text-gray-300"></i>
-                                    <?php elseif ($device['device'] === 'Android'): ?>
-                                        <i class="fab fa-android text-green-400"></i>
-                                    <?php else: ?>
-                                        <i class="fas fa-question text-gray-400"></i>
-                                    <?php endif; ?>
+                                    <i class="fab fa-windows text-blue-400"></i>
                                 </div>
 
                                 <div>
-                                    <h3 class="font-medium"><?= htmlspecialchars($device['device']) ?></h3>
+                                    <h3 class="font-medium truncate w-48">
+                                        <?= htmlspecialchars($device['user_agent']) ?>
+                                    </h3>
                                     <p class="text-gray-400 text-sm">Detected device</p>
                                 </div>
                             </div>
@@ -93,19 +112,39 @@
 
                                 <div class="flex justify-between text-sm">
                                     <span class="text-yellow-400">Locked attempts:</span>
-                                    <span class="font-medium"><?= (int) $device['total_locked'] ?></span>
+                                    <span class="font-medium">
+                                        <?php
+                                        echo htmlspecialchars($device['total_locked'] ? 'Locked' : 'Active');
+                                        ?>
+                                    </span>
                                 </div>
                                 <hr>
-                                <form action="#">
-                                    <div class="flex justify-end mt-5">
-                                        <input type="hidden" value="<?= htmlspecialchars($devices['user_agent']) ?>">
-                                        <input type="hidden" name="__method" value="DELETE">
-                                        <button type="submit"
-                                            class="flex items-center gap-1 text-xs bg-red-500 p-2 rounded-lg cursor-pointer">
-                                            <i class="fa fa-trash"></i> Ban Device
-                                        </button>
-                                    </div>
-                                </form>
+                                <?php if ($device['account_status']): ?>
+                                    <form action="/updateStatus" method="POST">
+                                        <input type="hidden" name="__method" value="PATCH">
+                                        <div class="flex justify-end mt-5">
+                                            <input type="hidden" name="deviceName"
+                                                value="<?= htmlspecialchars($device['user_agent']) ?>">
+
+                                            <button type="submit" name="unlockDevice"
+                                                class="flex items-center gap-1 text-xs bg-green-500 p-2 rounded-lg cursor-pointer">
+                                                <i class="fa fa-lock-open"></i> Unlocked Device
+                                            </button>
+                                        </div>
+                                    </form>
+                                <?php else: ?>
+                                    <form action="/postDevice" method="POST">
+                                        <div class="flex justify-end mt-5">
+                                            <input type="hidden" name="deviceName"
+                                                value="<?= htmlspecialchars($device['user_agent']) ?>">
+
+                                            <button type="submit"
+                                                class="flex items-center gap-1 text-xs bg-red-500 p-2 rounded-lg cursor-pointer">
+                                                <i class="fa fa-lock"></i> Lock Device
+                                            </button>
+                                        </div>
+                                    </form>
+                                <?php endif; ?>
                             </div>
 
                         </div>
@@ -260,7 +299,7 @@
                     },
                     {
                         label: 'Locked',
-                        data: <?= json_encode($chartLocked) ?>,
+                        data: <?= json_encode(array_column($chartLocked, 'count')) ?>,
                         backgroundColor: '#f59e0b', // Yellow
                         borderColor: '#f59e0b',
                         borderWidth: 1,
