@@ -254,7 +254,6 @@
                 </table>
             </div>
 
-            <!-- Bulk Actions and Pagination -->
             <div class="p-4 border-t border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex gap-2">
                     <button class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm">
