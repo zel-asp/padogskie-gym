@@ -96,6 +96,7 @@ if (isset($_POST['register'])) {
             header('Location: /signup');
             exit();
         }
+
     } else {
         $_SESSION['errors'] = $errors;
         header('Location: /signup');
