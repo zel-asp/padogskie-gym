@@ -54,7 +54,7 @@ try {
         // Insert payment record
         $db->query(
             "INSERT INTO payments (user_id, name, email, plan, amount, payment_method, status)
-             VALUES (?, ?, ?, ?, ?, ?, 'Pending')",
+            VALUES (?, ?, ?, ?, ?, ?, 'Pending')",
             [$userId, $fullname, $email, $plan, $amount, $payment_method]
         );
 
