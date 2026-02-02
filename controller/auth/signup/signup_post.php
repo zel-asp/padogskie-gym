@@ -86,6 +86,7 @@ if (isset($_POST['register'])) {
                 ]
             );
 
+
             // Redirect to login
             header('Location: /login');
             exit();
