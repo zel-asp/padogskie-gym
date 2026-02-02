@@ -62,8 +62,8 @@
 
             <!-- Introduction -->
             <div class="bg-white rounded-lg shadow-sm p-6 mb-8 border border-gray-200">
-                <p class="mb-4 text-lg">Welcome to <span class="font-semibold text-orange-500">Padogskei Wild
-                        Gym</span>! By accessing or using our services, website, you agree to comply
+                <p class="mb-4 text-lg">Welcome to <span class="font-semibold text-orange-500">Iron Pulse
+                        Fitness</span>! By accessing or using our services, website, you agree to comply
                     with and be bound by the following terms and conditions.</p>
                 <p class="text-gray-600">Please read these Terms of Service carefully before using our website, or
                     services. These terms govern your use of our digital platforms and physical facilities.
@@ -121,7 +121,7 @@
                         <div class="bg-gray-50 rounded p-4 my-4">
                             <h3 class="font-semibold text-gray-700 mb-2">Online Registration:</h3>
                             <p class="text-sm text-gray-700">By registering through our website platform, you
-                                acknowledge that all provided information is accurate and complete. Padogskei Wild Gym
+                                acknowledge that all provided information is accurate and complete. Iron Pulse Fitness
                                 reserves the right to verify membership information and suspend accounts with fraudulent
                                 details.</p>
                         </div>
@@ -165,8 +165,8 @@
                     </div>
                     <div class="pl-11">
                         <p class="mb-4">
-                            You acknowledge that participation in physical activities involves inherent risks. Padogskei
-                            Wild Gym is not liable for any injuries sustained during use of facilities.
+                            You acknowledge that participation in physical activities involves inherent risks. Iron
+                            Pulse Fitness is not liable for any injuries sustained during use of facilities.
                         </p>
                         <div class="bg-red-50 border-l-4 border-red-500 p-4 my-4">
                             <p class="text-sm text-gray-700"><span class="font-semibold">Important:</span> All members
@@ -194,7 +194,7 @@
                     </div>
                     <div class="pl-11">
                         <p class="mb-4">
-                            Padogskei Wild Gym is committed to protecting your personal information in compliance with
+                            Iron Pulse Fitness is committed to protecting your personal information in compliance with
                             the Philippine Data Privacy Act of 2012.
                         </p>
                         <h3 class="font-semibold text-gray-700 mb-2">Data Collection and Use:</h3>
@@ -223,7 +223,7 @@
                     </div>
                     <div class="pl-11">
                         <p class="mb-4">
-                            To the maximum extent permitted by law, Padogskei Wild Gym shall not be liable for any
+                            To the maximum extent permitted by law, Iron Pulse Fitness shall not be liable for any
                             direct, indirect, incidental, or consequential damages arising from your use of our
                             services, website, or facilities.
                         </p>
