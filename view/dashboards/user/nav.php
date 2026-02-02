@@ -33,6 +33,6 @@
         </nav>
     </div>
     <div class="mt-8 text-center hidden lg:block">
-        <p class="text-sm text-gray-400">© 2025 Padogskei Wild Gym</p>
+        <p class="text-sm text-gray-400">© 2025 Janzel Dolo</p>
     </div>
 </aside>
