@@ -54,6 +54,7 @@ if (isset($_POST['register'])) {
             if ($isDeviceLocked) {
                 $errors[] = 'SignUp Denied, Your device is locked';
             }
+
             // Check if username or email already exists
             $stmt = $db->query(
                 'SELECT id FROM users WHERE email = :email OR username = :username',
