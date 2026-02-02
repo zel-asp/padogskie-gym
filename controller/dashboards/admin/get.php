@@ -375,4 +375,3 @@ view_path('dashboards/admin', 'index.php', [
     'lockedDevice' => $lockedDeviceTotal,
     'newToday' => $newTodayTotal,
 ]);
-?>
