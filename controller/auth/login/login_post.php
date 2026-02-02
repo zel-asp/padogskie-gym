@@ -9,7 +9,7 @@ $errors = [];
 
 
 if (isset($_POST['login'])) {
-    $email = trim($_POST['email']);
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
     $captchaResponse = $_POST['cf-turnstile-response'] ?? '';
     $errors = [];
@@ -39,6 +39,12 @@ if (isset($_POST['login'])) {
         if (!$responseData->success) {
             $errors[] = 'CAPTCHA verification failed. Please try again.';
         }
+    }
+
+    $pattern = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";
+
+    if (!preg_match($pattern, $email)) {
+        $errors[] = "Email contains invalid characters.";
     }
 
     $isDeviceLocked = $db->query(
