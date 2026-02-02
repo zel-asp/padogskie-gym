@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Generation Time: Oct 24, 2025 at 12:38 PM
+-- Generation Time: Feb 02, 2026 at 03:56 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -95,6 +95,58 @@ INSERT INTO `images` (`id`, `img_name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `locked_devices`
+--
+
+CREATE TABLE `locked_devices` (
+  `id` int(11) NOT NULL,
+  `device` varchar(255) NOT NULL,
+  `login_success` int(11) DEFAULT 0,
+  `login_errors` int(11) DEFAULT 0,
+  `status` enum('active','locked') NOT NULL DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `locked_devices`
+--
+
+INSERT INTO `locked_devices` (`id`, `device`, `login_success`, `login_errors`, `status`, `created_at`) VALUES
+(62, 'Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0', 0, 0, 'locked', '2026-02-02 14:53:06');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `login_logs`
+--
+
+CREATE TABLE `login_logs` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `status` enum('success','error') NOT NULL,
+  `is_success` tinyint(1) NOT NULL,
+  `message` varchar(255) DEFAULT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `account_status` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `login_logs`
+--
+
+INSERT INTO `login_logs` (`id`, `user_id`, `email`, `status`, `is_success`, `message`, `ip_address`, `user_agent`, `location`, `created_at`, `account_status`) VALUES
+(73, 1, 'admin_padogskie@gmail.com', 'success', 1, 'Login successful', '::1', 'Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0', NULL, '2026-02-01 18:21:06', 'locked'),
+(74, 36, 'janzeldols@gmail.com', 'error', 1, 'Login successful', '::1', 'Mozilla/5.0 (X11; Windows x86_64; rv:142.0) Gecko/20100101 Firefox/142.0', NULL, '2026-02-01 18:21:41', NULL),
+(75, 36, 'janzeldols@gmail.com', 'success', 1, 'Login successful', '::1', 'Mozilla/5.0 (X11; Windows x86_64; rv:142.0) Gecko/20100101 Firefox/142.0', NULL, '2026-02-02 07:02:42', NULL),
+(76, 1, 'admin_padogskie@gmail.com', 'success', 1, 'Login successful', '::1', 'Mozilla/5.0 (X11; Windows x86_64; rv:142.0) Gecko/20100101 Firefox/142.0', NULL, '2026-02-02 07:03:36', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `membershipplans`
 --
 
@@ -112,7 +164,7 @@ CREATE TABLE `membershipplans` (
 --
 
 INSERT INTO `membershipplans` (`id`, `Basic`, `Regular`, `Premium`, `created_at`, `updated_at`) VALUES
-(1, 350, 700, 2000, '2025-10-23 18:47:51', '2025-10-23 20:08:05');
+(1, 350, 700, 1400, '2025-10-23 18:47:51', '2026-01-31 13:09:07');
 
 -- --------------------------------------------------------
 
@@ -134,6 +186,13 @@ CREATE TABLE `payments` (
   `expiration_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`id`, `user_id`, `plan`, `amount`, `payment_method`, `payment_date`, `name`, `email`, `status`, `membership_status`, `expiration_date`) VALUES
+(102, 36, 'Regular', 700.00, 'GCash', '2026-02-01 10:58:21', 'janzeldols', 'janzeldols@gmail.com', 'Basic', 'Active', '2026-02-16');
+
 -- --------------------------------------------------------
 
 --
@@ -147,16 +206,19 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `terms_accepted` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `session_token` varchar(255) DEFAULT NULL
+  `session_token` varchar(255) DEFAULT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `terms_accepted`, `created_at`, `session_token`) VALUES
-(1, 'Admin', 'admin_padogskie@gmail.com', '$2y$10$MpgnuDdW8rVaqqPchrXY2OVdmZGzyCXVMvnIXMsoiEkrvnLkwFpta', 1, '2025-10-24 10:34:56', '5270dba86ab5d079b8cf28379dc76fec2affab44117d04a99fcd81601c6ff1dc'),
-(27, 'User1', 'user1@gmail.com', '$2y$10$G47N/TyMGbrMQsNvB9H5/uJ9nbWe7u6kDjYvIhNOBUs//NLLil05.', 1, '2025-10-24 10:29:22', '15cc792329be96d2a4dad4890fc5f91ef62872d03928bb647fb329a2434e4224');
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `terms_accepted`, `created_at`, `session_token`, `user_agent`, `status`) VALUES
+(1, 'Admin101', 'admin_padogskie@gmail.com', '$2y$10$GC2QQPMMopwBkUpa5vFzR.bS2eAbXCAVLionelCkTzX3AedD2QOo.', 1, '2026-02-01 09:37:40', '34a5b147795c7ca491759b84f179cb9bcfef268bf3a10f5955060ff1880f96d6', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0', NULL),
+(36, 'janzeldols', 'janzeldols@gmail.com', '$2y$10$dDZ.ai/hBNjP7mucKWgvbOauLsDH5G0pc3UZROWHXbeLUsSux65w6', 1, '2026-02-01 09:39:49', '3b477fea93d918558d38f31ee254cc75e510c16cbca376a492ebe03bd8fe76de', NULL, NULL),
+(37, 'user1', 'user1@gmail.com', '$2y$10$ck/Q6CsxtDy70YxdC1Ig/uajpsqfcaHKocpr5P63eDH.FAxRZ8Gzm', 1, '2026-02-01 17:32:33', 'ed31ab52a6c7cb677cf407895bcab4ed1a9d7a279d2a310bd14552034d9bccef', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0', 'locked');
 
 -- --------------------------------------------------------
 
@@ -210,6 +272,18 @@ ALTER TABLE `images`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `locked_devices`
+--
+ALTER TABLE `locked_devices`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `login_logs`
+--
+ALTER TABLE `login_logs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `membershipplans`
 --
 ALTER TABLE `membershipplans`
@@ -250,19 +324,31 @@ ALTER TABLE `admininfo`
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `images`
 --
 ALTER TABLE `images`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `locked_devices`
+--
+ALTER TABLE `locked_devices`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+
+--
+-- AUTO_INCREMENT for table `login_logs`
+--
+ALTER TABLE `login_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT for table `membershipplans`
@@ -274,19 +360,19 @@ ALTER TABLE `membershipplans`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
