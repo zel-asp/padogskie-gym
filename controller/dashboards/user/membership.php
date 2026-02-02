@@ -15,15 +15,15 @@ try {
     if (isset($_POST['register'])) {
         $errors = [];
 
-        $fullname = trim($_POST['fullname']);
+        $fullname = strip_tags(trim($_POST['fullname']));
         $age = (int) $_POST['age'];
-        $gender = trim($_POST['gender']);
-        $contact = trim($_POST['contact']);
-        $address = trim($_POST['address']);
+        $gender = strip_tags(trim($_POST['gender']));
+        $contact = strip_tags(trim($_POST['contact']));
+        $address = strip_tags(trim($_POST['address']));
         $email = trim($_POST['email']);
         $height = (int) $_POST['height'];
         $weight = (int) $_POST['weight'];
-        $medical_conditions = trim($_POST['medical_conditions']);
+        $medical_conditions = strip_tags(trim($_POST['medical_conditions']));
         $userId = $_SESSION['user']['id'];
 
         if (!$userId) {
