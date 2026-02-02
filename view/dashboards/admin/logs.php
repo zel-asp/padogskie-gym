@@ -273,7 +273,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Initialize Chart.js Bar Graph
         const ctx = document.getElementById('loginChart').getContext('2d');
 
         const loginChart = new Chart(ctx, {
