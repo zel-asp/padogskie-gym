@@ -9,7 +9,7 @@
                 <button id="mobile-menu-btn" class="mr-4 text-xl">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h1 class="text-xl font-bold">Padogskei Wild Gym</h1>
+                <h1 class="text-xl font-bold">Iron Pulse Fitness</h1>
             </div>
         </header>
 
