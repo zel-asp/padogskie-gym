@@ -42,7 +42,6 @@ if (isset($_POST['register'])) {
         $errors[] = 'You must accept the Terms and Conditions.';
     }
 
-
     // Proceed only if no errors
     if (empty($errors)) {
         try {
