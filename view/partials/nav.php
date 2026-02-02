@@ -4,8 +4,8 @@
             <div class="logo center-vertical">
                 <button onclick="history.back()"
                     class="text-black font-extrabold text-xl md:text-2xl break-words max-w-xs md:max-w-none ml-2 cursor-pointer">
-                    PADOGSKEI
-                    <span class="text-brand">WILDGYM</span>
+                    IRONPULSE
+                    <span class="text-brand">FITNESS</span>
                 </button>
             </div>
 
