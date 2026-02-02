@@ -38,6 +38,7 @@ if (isset($_POST['register'])) {
         $errors[] = 'Passwords do not match.';
     }
 
+
     if (!$terms) {
         $errors[] = 'You must accept the Terms and Conditions.';
     }
