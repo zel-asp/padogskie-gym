@@ -191,27 +191,24 @@ $lockedToday = $lockedTodayResult['total'] ?? 0;
 
 /**
  * -------------------------------------------------
- * 2️DEVICE & BROWSER SUMMARY (Windows)
+ * DEVICE & BROWSER SUMMARY (Windows)
  * -------------------------------------------------
  */
 
 $deviceSummary = $db->query("
     SELECT
-        CASE
-            WHEN user_agent LIKE '%Windows%' THEN 'Windows'
-            WHEN user_agent LIKE '%Linux%' THEN 'Linux'
-            WHEN user_agent LIKE '%Mac%' OR user_agent LIKE '%OS X%' THEN 'macOS'
-            WHEN user_agent LIKE '%Android%' THEN 'Android'
-            ELSE 'Other'
-        END AS device,
-
+        user_agent,
+        account_status,
         COUNT(*) AS total_logs,
         SUM(status = 'success') AS total_success,
         SUM(status = 'error') AS total_error,
         SUM(account_status = 'locked') AS total_locked
     FROM login_logs
-    GROUP BY device
+    GROUP BY user_agent
 ")->find();
+
+$lockedChart = $deviceSummary ? 1 : 0;
+
 
 /**
  * -------------------------------------------------
@@ -235,14 +232,12 @@ $chartData = $db->query(
 $chartLabels = [];
 $chartSuccess = [];
 $chartError = [];
-$chartLocked = [];
 
 foreach ($chartData as $day) {
     $date = new DateTime($day['log_date']);
     $chartLabels[] = $date->format('D'); // Short day name
     $chartSuccess[] = $day['success'] ?? 0;
     $chartError[] = $day['error'] ?? 0;
-    $chartLocked[] = $day['locked'] ?? 0;
 }
 
 // find date range for display
@@ -313,6 +308,45 @@ function parseUserAgent($userAgent)
     }
 }
 
+// Locked devices total count
+// Locked devices count by date
+$chartLocked = $db->query("
+    SELECT 
+        COUNT(*) as count
+    FROM locked_devices
+")->find();
+
+// Locked devices total count
+$lockedDeviceQuery = $db->query("
+    SELECT COUNT(id) AS total
+    FROM locked_devices
+    WHERE status = 'locked'
+");
+
+// Handle based on your Database class method
+if (method_exists($lockedDeviceQuery, 'fetch_one')) {
+    $lockedDeviceResult = $lockedDeviceQuery->fetch_one();
+    $lockedDeviceTotal = $lockedDeviceResult ? (int) $lockedDeviceResult['total'] : 0;
+} else {
+    $lockedDeviceResult = $lockedDeviceQuery->find();
+    $lockedDeviceTotal = isset($lockedDeviceResult[0]) ? (int) $lockedDeviceResult[0]['total'] : 0;
+}
+
+// Locked devices today (last 24 hours)
+$newTodayQuery = $db->query("
+    SELECT COUNT(id) AS total
+    FROM locked_devices
+    WHERE status = 'locked'
+    AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+");
+
+if (method_exists($newTodayQuery, 'fetch_one')) {
+    $newTodayResult = $newTodayQuery->fetch_one();
+    $newTodayTotal = $newTodayResult ? (int) $newTodayResult['total'] : 0;
+} else {
+    $newTodayResult = $newTodayQuery->find();
+    $newTodayTotal = isset($newTodayResult[0]) ? (int) $newTodayResult[0]['total'] : 0;
+}
 
 view_path('dashboards/admin', 'index.php', [
     'userCount' => $userCount,
@@ -338,5 +372,8 @@ view_path('dashboards/admin', 'index.php', [
     'chartError' => $chartError,
     'chartLocked' => $chartLocked,
     'dateRange' => $dateRange,
-    'recentLogs' => $processedLogs
+    'recentLogs' => $processedLogs,
+    'lockedDevice' => $lockedDeviceTotal,
+    'newToday' => $newTodayTotal,
 ]);
+?>
