@@ -19,6 +19,7 @@ if (isset($_POST['login'])) {
     $maxAttempts = 3;
     $attemptWindow = 30;
 
+
     // ---------- CAPTCHA CHECK ----------
     if (empty($captchaResponse)) {
         $errors[] = 'Please complete the CAPTCHA.';
