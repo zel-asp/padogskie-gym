@@ -103,37 +103,3 @@ window.addEventListener('popstate', () => {
         currentTabButton.classList.add('active-tab');
     }
 });
-
-
-//downlaod functionality
-function downloadQRCode() {
-    // Get the QR code image element
-    const qrImage = document.getElementById('qr-code-image');
-    const imageUrl = qrImage.src;
-
-    // Create a temporary anchor element
-    const downloadLink = document.createElement('a');
-    downloadLink.href = imageUrl;
-
-    // Set the download filename
-    const fileName = 'GCash_QR_Code_Padogskei_Gym.jpg';
-    downloadLink.download = fileName;
-
-    // Append to body, click, and remove
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-
-    // Optional: Show download confirmation
-    const originalText = event.target.innerHTML;
-    event.target.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
-    event.target.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-    event.target.classList.add('bg-green-600');
-
-    // Reset button after 2 seconds
-    setTimeout(() => {
-        event.target.innerHTML = originalText;
-        event.target.classList.remove('bg-green-600');
-        event.target.classList.add('bg-blue-600', 'hover:bg-blue-700');
-    }, 2000);
-}

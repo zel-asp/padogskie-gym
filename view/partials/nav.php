@@ -1,68 +1,71 @@
-<nav class=" bg-gray-50 fixed p-3 w-full top-0 left-0 z-100 shadow-md">
-    <div class="center-vertical flex-col  flex-wrap md:flex-row md:justify-around ">
-        <div class=" justify-between center-vertical w-full md:w-auto">
-            <div class="logo center-vertical">
-                <button onclick="history.back()"
-                    class="text-black font-extrabold text-xl md:text-2xl break-words max-w-xs md:max-w-none ml-2 cursor-pointer">
-                    IRONPULSE
-                    <span class="text-brand">FITNESS</span>
+<nav class="fixed top-0 left-0 w-full z-[100] transition-all duration-300 border-b border-white/10 bg-black/20 backdrop-blur-md shadow-lg"
+    id="main-nav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16 md:h-20">
+
+            <div class="flex-shrink-0 flex items-center">
+                <a href="/"
+                    class="text-white font-black text-xl md:text-2xl tracking-tighter hover:opacity-80 transition-opacity">
+                    IRONPULSE <span class="text-brand">FITNESS</span>
+                </a>
+            </div>
+
+            <div class="md:hidden flex items-center">
+                <button id="js-hamburgerIcon" class="text-white text-2xl focus:outline-none">
+                    <i class="bi bi-list" id="hamburger-icon"></i>
+                </button>
+                <button id="js-closeIcon" class="hidden text-white text-2xl focus:outline-none">
+                    <i class="bi bi-x-lg"></i>
                 </button>
             </div>
 
-            <span class="md:hidden bi bi-list text-md font-bold ml-5 cursor-pointer" id="js-hamburgerIcon"></span>
-            <span class="hidden md:hidden text-md font-bold ml-5 cursor-pointer" id="js-closeIcon">
-                <i class="bi bi-x-lg"></i>
-            </span>
+            <div class="hidden md:flex items-center space-x-8">
+                <ul class="flex items-center space-x-6 text-sm font-medium text-white/80">
+                    <li><a href="/#" class="hover:text-brand transition-colors">Home</a></li>
+                    <li><a href="/#main" class="hover:text-brand transition-colors">Our Story</a></li>
+                    <li><a href="/#offer" class="hover:text-brand transition-colors">Offer</a></li>
+                    <li><a href="/#stats" class="hover:text-brand transition-colors">Stats</a></li>
+                    <li><a href="/#gallery" class="hover:text-brand transition-colors">Gallery</a></li>
+                    <li><a href="/#contact" class="hover:text-brand transition-colors">Contact</a></li>
+                </ul>
 
-        </div>
-
-
-        <div class="hidden mt-5 md:ml-5 px-15 py-3 flex-col md:flex md:flex-row md:items-center md:gap-6 justify-end md:mt-0 shadow-md rounded-sm w-full md:w-auto "
-            id="js-navLinks">
-            <ul class="center-vertical flex-col md:flex-row gap-4 md:gap-5 text-sm md:text-md">
-                <li><a href="/#" class="hover:text-brand">Home</a></li>
-                <li><a href="/#main" class="hover:text-brand">Our Story</a></li>
-                <li><a href="/#offer" class="hover:text-brand ">Offer</a></li>
-                <li><a href="/#stats" class="hover:text-brand">Stats</a></li>
-                <li><a href="/#gallery" class="hover:text-brand">Gallery</a></li>
-                <li><a href="/#contact" class="hover:text-brand">Contact</a></li>
-            </ul>
-            <div
-                class="center-vertical flex-col justify-start md:flex-row gap-2 md:gap-4 text-brand px-4 font-medium mt-2 md:mt-0 md:ml-5 text-sm md:text-md">
-
-                <?php if (!isset($_SESSION['user']) && !isset($_SESSION['admin'])): ?>
-                    <!-- not logged in -->
-                    <a href="/login"
-                        class="hover:text-black bg-gray-100 w-full sm:w-70 md:w-auto rounded-lg px-4 py-2 text-center">
-                        Login
-                    </a>
-
-                    <a href="/signup"
-                        class="w-full sm:w-70 md:w-auto rounded-lg bg-black px-4 py-2 text-white hover:bg-brand cursor-pointer text-center">
-                        Sign Up
-                    </a>
-                <?php else: ?>
-                    <!-- logged in -->
-                    <a href="/logout"
-                        class="hover:text-black bg-gray-100 w-full sm:w-70 md:w-auto rounded-lg px-4 py-2 text-center">
-                        Logout
-                    </a>
-
-                    <?php if (isset($_SESSION['admin'])): ?>
-                        <a href="/adminDashboard"
-                            class="w-full sm:w-70 md:w-auto rounded-lg bg-black px-4 py-2 text-white hover:bg-brand cursor-pointer text-center">
-                            Dashboard
+                <div class="flex items-center gap-3 border-l border-white/10 pl-6">
+                    <?php if (!isset($_SESSION['user']) && !isset($_SESSION['admin'])): ?>
+                        <a href="/login"
+                            class="text-white/80 hover:text-white text-sm font-semibold transition-colors">Login</a>
+                        <a href="/signup"
+                            class="bg-brand hover:bg-white hover:text-brand text-white px-5 py-2 rounded-full text-sm font-bold transition-all shadow-lg shadow-brand/20">
+                            Sign Up
                         </a>
                     <?php else: ?>
-                        <a href="/userdashboard"
-                            class="w-full sm:w-70 md:w-auto rounded-lg bg-black px-4 py-2 text-white hover:bg-brand cursor-pointer text-center">
+                        <a href="/logout" class="text-white/60 hover:text-white text-sm transition-colors">Logout</a>
+                        <a href="<?= isset($_SESSION['admin']) ? '/adminDashboard' : '/userdashboard' ?>"
+                            class="bg-white text-black hover:bg-brand hover:text-white px-5 py-2 rounded-full text-sm font-bold transition-all">
                             Dashboard
                         </a>
                     <?php endif; ?>
-                <?php endif; ?>
-
+                </div>
             </div>
-
         </div>
+    </div>
+
+    <div class="hidden md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10" id="js-navLinks">
+        <ul class="flex flex-col p-6 space-y-4 text-center">
+            <li><a href="/#" class="block text-lg text-white hover:text-brand">Home</a></li>
+            <li><a href="/#main" class="block text-lg text-white hover:text-brand">Our Story</a></li>
+            <li><a href="/#offer" class="block text-lg text-white hover:text-brand">Offer</a></li>
+            <li><a href="/#contact" class="block text-lg text-white hover:text-brand">Contact</a></li>
+
+            <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
+                <?php if (!isset($_SESSION['user']) && !isset($_SESSION['admin'])): ?>
+                    <a href="/login" class="w-full py-3 text-white border border-white/20 rounded-xl">Login</a>
+                    <a href="/signup" class="w-full py-3 bg-brand text-white rounded-xl font-bold">Sign Up</a>
+                <?php else: ?>
+                    <a href="<?= isset($_SESSION['admin']) ? '/adminDashboard' : '/userdashboard' ?>"
+                        class="w-full py-3 bg-white text-black rounded-xl font-bold">Dashboard</a>
+                    <a href="/logout" class="w-full py-3 text-white/50">Logout</a>
+                <?php endif; ?>
+            </div>
+        </ul>
     </div>
 </nav>

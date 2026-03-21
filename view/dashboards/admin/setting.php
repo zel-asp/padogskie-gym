@@ -107,7 +107,8 @@
 
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-gray-400">₱</span>
-                        <input type="number" name="price" required value="350" min="0" step="50"
+                        <input type="number" name="price" required value="<?= htmlspecialchars($plan['Basic']) ?>"
+                            min="0" step="50"
                             class="w-24 bg-gray-700 border border-gray-600 rounded px-3 py-1 font-bold text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
                         <span class="text-gray-400 text-sm">per month</span>
                     </div>
@@ -129,7 +130,8 @@
 
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-gray-400">₱</span>
-                        <input type="number" name="price" required value="700" min="0" step="50"
+                        <input type="number" name="price" required value="<?= htmlspecialchars($plan['Regular']) ?>"
+                            min="0" step="50"
                             class="w-24 bg-gray-700 border border-gray-600 rounded px-3 py-1 font-bold text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
                         <span class="text-gray-400 text-sm">per month</span>
                     </div>
@@ -151,7 +153,8 @@
 
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-gray-400">₱</span>
-                        <input type="number" name="price" required value="2000" min="0" step="50"
+                        <input type="number" name="price" required value="<?= htmlspecialchars($plan['Premium']) ?>"
+                            min="0" step="50"
                             class="w-24 bg-gray-700 border border-gray-600 rounded px-3 py-1 font-bold text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
                         <span class="text-gray-400 text-sm">per month</span>
                     </div>

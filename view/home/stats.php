@@ -1,4 +1,4 @@
-<section class="py-16 bg-gray text-white" id="stats">
+<section class="py-16 bg-gray text-white reveal-on-scroll" id="stats">
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-sm">
             <div>

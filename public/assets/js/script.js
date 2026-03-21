@@ -62,3 +62,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+        threshold: 0.15 // Trigger when 15% of the element is visible
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Add the class when scrolling DOWN into view
+                entry.target.classList.add('is-visible');
+            } else {
+                // Remove the class when scrolling UP or AWAY out of view
+                // This allows the animation to "reset" and play again
+                entry.target.classList.remove('is-visible');
+            }
+        });
+    }, observerOptions);
+
+    const targets = document.querySelectorAll('.reveal-on-scroll');
+    targets.forEach(target => observer.observe(target));
+});

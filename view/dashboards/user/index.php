@@ -51,8 +51,8 @@
             </main>
         </div>
 
-        <script src="assets/js/userDashboard.js">
-        </script>
+        <script src="assets/js/supabase-config.js"></script>
+        <script src="assets/js/userDashboard.js"></script>
     </body>
 
 </html>

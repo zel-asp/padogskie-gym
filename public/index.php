@@ -16,6 +16,7 @@ spl_autoload_register(function ($class) {
 
 //instance ot router class
 $router = new Core\Router;
+
 //file paths
 $routes = require base_path('core/routing/routes.php');
 

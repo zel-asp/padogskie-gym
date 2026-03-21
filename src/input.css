@@ -211,3 +211,36 @@ label {
     display: block;
     opacity: 1;
 }
+@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Initial state for scroll-triggered elements */
+    .reveal-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+
+    /* Trigger class added by JS */
+    .is-visible {
+        opacity: 1;
+        transform: translateY(0) !important;
+    }
+
+    /* Your existing manual animation class */
+    .animate-entrance {
+        opacity: 0;
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-500 { animation-delay: 0.5s; }

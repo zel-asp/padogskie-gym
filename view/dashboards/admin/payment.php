@@ -32,6 +32,18 @@
                     echo "<option value='$type' $selected>$type</option>";
                 } ?>
             </select>
+
+            <select name="sort_by"
+                class="w-full sm:w-auto p-2 rounded-lg border border-gray-600 bg-gray-700 text-gray-100 min-w-40">
+                <option value="amount_desc" <?= ($_GET['sort_by'] ?? 'amount_desc') === 'amount_desc' ? 'selected' : '' ?>>
+                    Highest Amount First</option>
+                <option value="amount_asc" <?= ($_GET['sort_by'] ?? '') === 'amount_asc' ? 'selected' : '' ?>>Lowest Amount
+                    First</option>
+                <option value="date_desc" <?= ($_GET['sort_by'] ?? '') === 'date_desc' ? 'selected' : '' ?>>Newest First
+                </option>
+                <option value="date_asc" <?= ($_GET['sort_by'] ?? '') === 'date_asc' ? 'selected' : '' ?>>Oldest First
+                </option>
+            </select>
         </div>
 
         <button type="submit"
@@ -41,61 +53,105 @@
         </button>
     </form>
 
-    <div class="bg-gray-900 rounded-lg p-4 sm:p-5 shadow-lg">
+    <div class="bg-gray-900 rounded-lg p-4 sm:p-5 shadow-lg overflow-x-auto">
         <div class="flex justify-between items-center mb-5">
             <h3 class="text-lg font-semibold">Payment History</h3>
+            <span class="text-sm text-gray-400">Total:
+                ₱<?= number_format(array_sum(array_column($payments, 'amount')), 2) ?></span>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse min-w-[900px]">
+            <table class="w-full border-collapse min-w-[1200px]">
                 <thead>
-                    <tr class="bg-gray-800">
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Payment ID
+                    <tr class="bg-gray-800 border-b-2 border-gray-600">
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Payment ID
                         </th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Member</th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Amount</th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Payment
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Member</th>
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Amount</th>
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Payment
                             Method</th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Email</th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Name</th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Mmbership
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Email</th>
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Name</th>
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Membership
                         </th>
-
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Date</th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Due Date
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Date</th>
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Due Date
                         </th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Status</th>
-                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-b border-gray-700">Actions
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Receipt
                         </th>
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm border-r border-gray-700">Status</th>
+                        <th class="text-left p-3 text-gray-400 font-normal text-sm">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php
+                    // Sort payments by amount (highest first)
+                    usort($payments, function ($a, $b) {
+                        $sortBy = $_GET['sort_by'] ?? 'amount_desc';
+                        switch ($sortBy) {
+                            case 'amount_asc':
+                                return $a['amount'] <=> $b['amount'];
+                            case 'date_desc':
+                                return strtotime($b['payment_date']) <=> strtotime($a['payment_date']);
+                            case 'date_asc':
+                                return strtotime($a['payment_date']) <=> strtotime($b['payment_date']);
+                            default: // amount_desc
+                                return $b['amount'] <=> $a['amount'];
+                        }
+                    });
+                    ?>
                     <?php foreach ($payments as $record): ?>
-                        <tr class="hover:bg-gray-800 transition-colors">
-                            <td class="p-3 border-b border-gray-700"><?= htmlspecialchars($record['payment_id']); ?></td>
-                            <td class="p-3 border-b border-gray-700"><?= htmlspecialchars($record['username']); ?></td>
-                            <td class="p-3 border-b border-gray-700 whitespace-nowrap">
-                                <?= htmlspecialchars($record['amount']); ?>
+                        <tr class="hover:bg-gray-800 transition-colors border-b border-gray-700">
+                            <td class="p-3 border-r border-gray-700"><?= htmlspecialchars($record['payment_id']); ?></td>
+                            <td class="p-3 border-r border-gray-700"><?= htmlspecialchars($record['username']); ?></td>
+                            <td
+                                class="p-3 whitespace-nowrap border-r border-gray-700 font-semibold <?= $record['amount'] >= 1000 ? 'text-green-400' : ($record['amount'] >= 500 ? 'text-yellow-400' : 'text-gray-300') ?>">
+                                ₱<?= number_format($record['amount'], 2); ?>
                             </td>
-                            <td class="p-3 border-b border-gray-700 truncate max-w-xs">
+                            <td class="p-3 truncate max-w-xs border-r border-gray-700">
                                 <?= htmlspecialchars($record['payment_method']); ?>
                             </td>
-                            <td class="p-3 border-b border-gray-700 truncate max-w-xs">
+                            <td class="p-3 truncate max-w-xs border-r border-gray-700">
                                 <?= htmlspecialchars($record['email']); ?>
                             </td>
-                            <td class="p-3 border-b border-gray-700 truncate max-w-xs">
-                                <?= htmlspecialchars($record['status']); ?>
-                            </td>
-                            <td class="p-3 border-b border-gray-700 truncate max-w-xs">
+                            <td class="p-3 truncate max-w-xs border-r border-gray-700">
                                 <?= htmlspecialchars($record['name']); ?>
                             </td>
-                            <td class="p-3 border-b border-gray-700 whitespace-nowrap">
+                            <td class="p-3 truncate max-w-xs border-r border-gray-700">
+                                <?php
+                                $planClass = '';
+                                if ($record['plan'] === 'Basic')
+                                    $planClass = 'text-blue-400';
+                                elseif ($record['plan'] === 'Regular')
+                                    $planClass = 'text-green-400';
+                                elseif ($record['plan'] === 'Premium')
+                                    $planClass = 'text-purple-400';
+                                ?>
+                                <span class="<?= $planClass ?> font-medium">
+                                    <?= htmlspecialchars($record['plan']); ?>
+                                </span>
+                            </td>
+                            <td class="p-3 whitespace-nowrap border-r border-gray-700">
                                 <?= htmlspecialchars(date('M d, Y', strtotime($record['payment_date']))); ?>
                             </td>
-                            <td class="p-3 border-b border-gray-700 whitespace-nowrap">
+                            <td class="p-3 whitespace-nowrap border-r border-gray-700">
                                 <?= htmlspecialchars(date('M d, Y', strtotime($record['expiration_date']))); ?>
                             </td>
-                            <td class="p-3 border-b border-gray-700">
+                            <td class="p-3 border-r border-gray-700">
+                                <?php if (!empty($record['receipt_url'])): ?>
+                                    <a href="<?= htmlspecialchars($record['receipt_url']); ?>" target="_blank"
+                                        class="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors">
+                                        <i class="fas fa-receipt text-sm"></i>
+                                        <span class="text-sm">View</span>
+                                        <i class="fas fa-external-link-alt text-xs"></i>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="text-gray-500 text-sm">
+                                        <i class="fas fa-times-circle"></i> No receipt
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="p-3 border-r border-gray-700">
                                 <?php
                                 $statusClass = 'bg-gray-700 text-gray-300';
                                 $status = strtolower($record['membership_status']);
@@ -111,7 +167,7 @@
                                     <?= htmlspecialchars($record['membership_status']); ?>
                                 </span>
                             </td>
-                            <td class="p-3 border-b border-gray-700">
+                            <td class="p-3">
                                 <div class="flex flex-col gap-2">
                                     <div class="flex flex-col sm:flex-row gap-2">
                                         <?php if (isset($_SESSION['admin'])): ?>
@@ -147,6 +203,15 @@
                             </td>
                         </tr>
                     <?php endforeach; ?>
+
+                    <?php if (empty($payments)): ?>
+                        <tr>
+                            <td colspan="12" class="p-8 text-center text-gray-400">
+                                <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                                No payment records found
+                            </td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

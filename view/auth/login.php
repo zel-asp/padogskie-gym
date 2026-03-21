@@ -1,96 +1,101 @@
 <?php
-
 $errors = $_SESSION['errors'] ?? [];
-
 unset($_SESSION['errors']);
-
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" class="h-full">
     <?php require base_path('view/partials/head.php'); ?>
 
+    <body class="h-full antialiased text-slate-200">
 
-    <body>
+        <div
+            class="relative min-h-screen bg-[url('/assets/imgs/background.jpg')] bg-cover bg-center flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
 
-        <div class="relative h-full md:h-screen bg-[url(/assets/imgs/background.jpg)] bg-cover bg-center text-white/80">
-            <div class="absolute inset-0 bg-black/10"></div>
+            <div id="LogIn"
+                class="relative z-10 w-full max-w-4xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row transition-all">
 
-            <div id="LogIn" class="relative flex-center h-screen font-medium ">
-                <div class="content relative flex-center flex-col md:flex-row gap-5 md:gap-20 w-full max-w-4xl m-5 
-            bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-10 md:p-20">
-                    <a href="/" class="absolute top-5 right-8 cursor-pointer">
-                        <i class="fa-regular fa-circle-xmark"></i>
-                    </a>
+                <a href="/"
+                    class="absolute top-5 right-6 text-white/40 hover:text-white transition-colors duration-200 z-20">
+                    <i class="fa-regular fa-circle-xmark text-xl"></i>
+                </a>
 
-                    <div class="mt-5 md:hidden">
-                        <img src="assets/imgs/logo.png" alt="padogskie Logo" class="w-[150px] mx-auto">
+                <div
+                    class="hidden md:flex flex-1 flex-col items-center justify-center bg-white/5 p-12 border-r border-white/10">
+                    <img src="assets/imgs/logo.png" alt="Logo" class="w-56 drop-shadow-2xl">
+                    <div class="mt-8 text-center">
+                        <h2 class="text-xl font-semibold text-white">Welcome Back</h2>
+                        <p class="text-sm text-white/50 mt-2">Sign in to access your dashboard and manage your account.
+                        </p>
                     </div>
-                    <div class="signIn_form">
-                        <h1 class="text-center md:text-start text-xl font-bold lg:text-2xl" id="Sign-In-Title">Sign-In
-                        </h1>
+                </div>
 
-                        <?php if (!empty($errors)): ?>
-                            <div class="mt-3 w-auto ">
-                                <?php foreach ($errors as $error): ?>
-                                    <div
-                                        class="flex items-center gap-2 bg-red-50 border border-red-400 text-red-700 p-2 rounded-md">
-                                        <i class="fa-solid fa-circle-exclamation text-red-600 text-sm"></i>
-                                        <span class="text-xs font-small"><?= htmlspecialchars($error) ?></span>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
+                <div class="flex-1 p-8 md:p-14">
+                    <div class="md:hidden mb-8 flex justify-center">
+                        <img src="assets/imgs/logo.png" alt="Logo" class="w-32">
+                    </div>
 
-                        <form action="/login" method="POST">
-                            <div class="flex flex-col mt-3">
-                                <label for="loginEmail">Email*</label>
-                                <input type="email" id="loginEmail" name="email" class="LoginInput" minlength="8"
-                                    maxlength="50" required autocomplete="email" />
-                            </div>
+                    <div class="mb-8">
+                        <h1 class="text-2xl font-bold text-white tracking-tight">Sign In</h1>
+                        <p class="text-white/60 text-sm mt-1">Enter your credentials below.</p>
+                    </div>
 
-                            <div class="flex flex-col mb-0">
-                                <label for="loginPassword">Password*</label>
-                                <div class="relative">
-                                    <input type="password" id="loginPassword" name="password"
-                                        class="LoginInput pr-10 w-full" minlength="8" maxlength="20" required
-                                        autocomplete="current-password">
-
-                                    <button type="button"
-                                        class="absolute right-3 top-4 transform -translate-y-1/2 text-black hover:text-brand transition-colors cursor-pointer text-xs"
-                                        id="togglePassword">
-                                        <i class="fa-regular fa-eye" id="eyeIcon"></i>
-                                    </button>
+                    <?php if (!empty($errors)): ?>
+                        <div class="mb-6 space-y-2">
+                            <?php foreach ($errors as $error): ?>
+                                <div
+                                    class="flex items-center gap-3 bg-red-500/20 border border-red-500/50 text-red-100 p-3 rounded-xl animate-in fade-in slide-in-from-top-1">
+                                    <i class="fa-solid fa-circle-exclamation text-xs"></i>
+                                    <span class="text-xs font-medium"><?= htmlspecialchars($error) ?></span>
                                 </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form action="/login" method="POST" class="space-y-5">
+                        <div class="group">
+                            <label for="loginEmail"
+                                class="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-2 ml-1">Email
+                                Address</label>
+                            <input type="email" id="loginEmail" name="email"
+                                class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:bg-black/40 transition-all"
+                                placeholder="e.g. alex@example.com" required autocomplete="email">
+                        </div>
+
+                        <div>
+                            <label for="loginPassword"
+                                class="block text-xs font-semibold uppercase tracking-wider text-white/60 mb-2 ml-1">Password</label>
+                            <div class="relative">
+                                <input type="password" id="loginPassword" name="password"
+                                    class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:bg-black/40 transition-all"
+                                    placeholder="••••••••" required autocomplete="current-password">
+                                <button type="button" id="togglePassword"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors">
+                                    <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                                </button>
                             </div>
+                        </div>
 
-                            <div class="cf-turnstile mt-3" data-sitekey="0x4AAAAAACWH4cPoBQCrb7lD"></div>
+                        <div class="cf-turnstile flex justify-center py-2" data-sitekey="0x4AAAAAACWH4cPoBQCrb7lD"
+                            data-theme="dark"></div>
 
-                            <button
-                                class="w-full mt-3 bg-brand p-1 rounded-xl lg:p-2 hover:bg-white hover:text-brand cursor-pointer"
-                                name="login" id="LogInBtn">
-                                Login
-                            </button>
+                        <button type="submit" name="login" id="LogInBtn"
+                            class="w-full bg-sky-500 hover:bg-sky-400 text-white font-bold py-3 rounded-xl shadow-lg shadow-sky-900/20 active:scale-[0.97] transition-all duration-150">
+                            Sign In
+                        </button>
 
-                            <!-- Sign Up Link -->
-                            <p class="text-xs text-center mt-2">
-                                Don't have an account?
-                                <a href="/signup" class="text-sky-500 hover:underline" data-show="#SignUp"
-                                    data-hide="#LogIn">Sign-up</a>
-                            </p>
-                        </form>
-
-                    </div>
-
-                    <div>
-                        <img src="assets/imgs/logo.png" alt="padogskie Logo"
-                            class="hidden md:block lg:w-[300px] w-[240px] mx-auto">
-                    </div>
+                        <p class="text-sm text-center text-white/40 mt-6">
+                            New here?
+                            <a href="/signup"
+                                class="text-sky-400 hover:text-sky-300 font-semibold transition-colors decoration-2 underline-offset-4 hover:underline">
+                                Create an account
+                            </a>
+                        </p>
+                    </form>
                 </div>
             </div>
         </div>
-
 
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         <script src="assets/js/script.js"></script>

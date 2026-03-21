@@ -26,6 +26,8 @@ $router->post('/membership', 'controller/dashboards/user/membership.php');
 
 $router->post('/pay', 'controller/dashboards/user/payment.php');
 $router->get('/payment_success', 'controller/dashboards/user/paymentConfirmation.php');
+$router->post('/update-receipt', 'controller/dashboards/user/updateReceipt.php');
+$router->post('/request-refund', 'controller/dashboards/user/request-refund.php');
 
 //user 
 $router->put('/update', 'controller/dashboards/user/update.php');

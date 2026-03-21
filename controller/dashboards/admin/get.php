@@ -2,7 +2,6 @@
 
 use Core\Database;
 
-
 $config = require base_path('config/config.php');
 $db = new Database($config['database']);
 
@@ -11,6 +10,14 @@ if (!isset($_SESSION['admin'])) {
     header('Location: /login');
     exit();
 }
+
+// Get filters from query string
+$search = $_GET['search'] ?? '';
+$statusFilter = $_GET['status'] ?? '';
+$membershipFilter = $_GET['membership'] ?? '';
+$sortBy = $_GET['sort_by'] ?? 'amount_desc';
+$dateRange = $_GET['date_range'] ?? '7'; // 7, 30, 90, 180
+$dateRangeDays = (int) $dateRange;
 
 // Total users
 $userCountStmt = $db->query("SELECT COUNT(*) AS total_users FROM users");
@@ -37,11 +44,6 @@ $recentPayment = $db->query("
     ")->fetch_one();
 
 //select all users
-// Get filters from query string
-$search = $_GET['search'] ?? '';
-$statusFilter = $_GET['status'] ?? '';
-$membershipFilter = $_GET['membership'] ?? '';
-
 $query = "
     SELECT 
         u.id AS user_id,
@@ -71,7 +73,7 @@ if (!empty($search)) {
 }
 $users = $db->query($query, $params)->find();
 
-// Payment query
+// Payment query with receipt_url
 $paymentQuery = "
     SELECT 
         p.id AS payment_id,
@@ -79,12 +81,14 @@ $paymentQuery = "
         u.username,
         u.email,
         p.name,
+        p.plan,
         p.amount,
         p.payment_method,
         p.status,
         p.membership_status,
         p.payment_date,
-        p.expiration_date
+        p.expiration_date,
+        p.receipt_url
     FROM payments p
     LEFT JOIN users u ON p.user_id = u.id
     WHERE 1
@@ -101,23 +105,34 @@ if (!empty($search)) {
 }
 
 if (!empty($statusFilter) && $statusFilter !== 'All') {
-    // Fix: Use membership_status for Active/Pending/Expired filter
     $paymentQuery .= " AND p.membership_status = ?";
     $paymentParams[] = $statusFilter;
 }
 
 if (!empty($membershipFilter) && $membershipFilter !== 'All') {
-    // Fix: Use status for Basic/Regular/Premium filter
     $paymentQuery .= " AND p.status = ?";
     $paymentParams[] = $membershipFilter;
 }
 
-$paymentQuery .= " ORDER BY p.payment_date DESC";
+// Add sorting
+switch ($sortBy) {
+    case 'amount_asc':
+        $paymentQuery .= " ORDER BY p.amount ASC";
+        break;
+    case 'date_desc':
+        $paymentQuery .= " ORDER BY p.payment_date DESC";
+        break;
+    case 'date_asc':
+        $paymentQuery .= " ORDER BY p.payment_date ASC";
+        break;
+    default: // amount_desc
+        $paymentQuery .= " ORDER BY p.amount DESC";
+}
 
 // fetch all payments
 $payments = $db->query($paymentQuery, $paymentParams)->find();
 
-//recent feedbakcs
+//recent feedbacks
 $recentFeedback = $db->query("
                 SELECT *
                 FROM feedback
@@ -135,20 +150,11 @@ $allFeedback = $db->query('SELECT * FROM feedback ORDER BY created_at DESC LIMIT
 //updated plan can be modify by admins
 $plan = $db->query('SELECT * FROM membershipplans WHERE id = ?', [1])->fetch_one();
 
-//gym info can be modify by admins
 $info = $db->query('SELECT * FROM admininfo WHERE id = ?', [1])->fetch_one();
 
-//announcement
+
 $announcements = $db->query('SELECT * FROM announcements')->find();
 
-
-
-
-/**
- * -------------------------------------------------
- * 1STATS OVERVIEW (Last 30 days)
- * -------------------------------------------------
- */
 
 $totalLoginsResult = $db->query(
     "SELECT COUNT(*) AS total
@@ -188,10 +194,9 @@ $lockedTodayResult = $db->query(
 )->find();
 $lockedToday = $lockedTodayResult['total'] ?? 0;
 
-
 /**
  * -------------------------------------------------
- * DEVICE & BROWSER SUMMARY (Windows)
+ * DEVICE & BROWSER SUMMARY
  * -------------------------------------------------
  */
 
@@ -208,7 +213,6 @@ $deviceSummary = $db->query("
 ")->find();
 
 $lockedChart = $deviceSummary ? 1 : 0;
-
 
 /**
  * -------------------------------------------------
@@ -243,7 +247,7 @@ foreach ($chartData as $day) {
 // find date range for display
 $firstDate = !empty($chartData) ? new DateTime($chartData[0]['log_date']) : new DateTime();
 $lastDate = !empty($chartData) ? new DateTime(end($chartData)['log_date']) : new DateTime();
-$dateRange = $firstDate->format('M j') . ' - ' . $lastDate->format('M j');
+$dateRangeDisplay = $firstDate->format('M j') . ' - ' . $lastDate->format('M j');
 
 $recentLogs = $db->query(
     "SELECT
@@ -347,6 +351,83 @@ if (method_exists($newTodayQuery, 'fetch_one')) {
     $newTodayTotal = isset($newTodayResult[0]) ? (int) $newTodayResult[0]['total'] : 0;
 }
 
+/**
+ * -------------------------------------------------
+ * REVENUE DATA WITH DATE RANGE
+ * -------------------------------------------------
+ */
+
+// Get revenue data based on date range
+$revenueQuery = $db->query("
+    SELECT 
+        DATE(payment_date) as date,
+        SUM(amount) as total
+    FROM payments
+    WHERE payment_date >= CURDATE() - INTERVAL $dateRangeDays DAY
+    GROUP BY DATE(payment_date)
+    ORDER BY date ASC
+");
+$revenueData = $revenueQuery->find();
+
+$revenueLabels = [];
+$revenueValues = [];
+foreach ($revenueData as $day) {
+    $revenueLabels[] = date('M d', strtotime($day['date']));
+    $revenueValues[] = (float) $day['total'];
+}
+
+/**
+ * -------------------------------------------------
+ * MEMBERSHIP DISTRIBUTION - Based on status column
+ * -------------------------------------------------
+ */
+
+$basicCount = 0;
+$regularCount = 0;
+$premiumCount = 0;
+$expiredCount = 0;
+$pendingCount = 0;
+
+if (!empty($payments)) {
+    foreach ($payments as $payment) {
+        $status = $payment['status'] ?? '';
+        if ($status === 'Basic') {
+            $basicCount++;
+        } elseif ($status === 'Regular') {
+            $regularCount++;
+        } elseif ($status === 'Premium') {
+            $premiumCount++;
+        } elseif ($status === 'Expired') {
+            $expiredCount++;
+        } elseif ($status === 'Pending') {
+            $pendingCount++;
+        }
+    }
+}
+
+$totalWithPlan = $basicCount + $regularCount + $premiumCount + $expiredCount + $pendingCount;
+$basicPercent = $totalWithPlan > 0 ? round(($basicCount / $totalWithPlan) * 100) : 0;
+$regularPercent = $totalWithPlan > 0 ? round(($regularCount / $totalWithPlan) * 100) : 0;
+$premiumPercent = $totalWithPlan > 0 ? round(($premiumCount / $totalWithPlan) * 100) : 0;
+$expiredPercent = $totalWithPlan > 0 ? round(($expiredCount / $totalWithPlan) * 100) : 0;
+$pendingPercent = $totalWithPlan > 0 ? round(($pendingCount / $totalWithPlan) * 100) : 0;
+
+/**
+ * -------------------------------------------------
+ * ACTIVE MEMBERS COUNT (Based on membership_status)
+ * -------------------------------------------------
+ */
+
+$activeStatusCount = 0;
+if (!empty($payments)) {
+    foreach ($payments as $payment) {
+        $membershipStatus = strtolower($payment['membership_status'] ?? '');
+        if ($membershipStatus === 'active') {
+            $activeStatusCount++;
+        }
+    }
+}
+
 view_path('dashboards/admin', 'index.php', [
     'userCount' => $userCount,
     'totalPayments' => $totalPayments,
@@ -370,8 +451,26 @@ view_path('dashboards/admin', 'index.php', [
     'chartSuccess' => $chartSuccess,
     'chartError' => $chartError,
     'chartLocked' => $chartLocked,
-    'dateRange' => $dateRange,
+    'dateRangeDisplay' => $dateRangeDisplay,
     'recentLogs' => $processedLogs,
     'lockedDevice' => $lockedDeviceTotal,
     'newToday' => $newTodayTotal,
+    // Revenue chart data
+    'revenueLabels' => $revenueLabels,
+    'revenueValues' => $revenueValues,
+    // Current date range
+    'dateRange' => $dateRangeDays,
+    // Membership distribution data
+    'basicCount' => $basicCount,
+    'regularCount' => $regularCount,
+    'premiumCount' => $premiumCount,
+    'expiredCount' => $expiredCount,
+    'pendingCount' => $pendingCount,
+    'basicPercent' => $basicPercent,
+    'regularPercent' => $regularPercent,
+    'premiumPercent' => $premiumPercent,
+    'expiredPercent' => $expiredPercent,
+    'pendingPercent' => $pendingPercent,
+    // Active members count
+    'activeStatusCount' => $activeStatusCount,
 ]);

@@ -4,8 +4,8 @@ namespace Core;
 
 class Response
 {
-    const NOT_FOUND = 404;
-    const UNAUTHORIZE_USER = 401;
-    const SERVER_ERROR = 500;
+    const int NOT_FOUND = 404;
+    const int UNAUTHORIZE_USER = 401;
+    const int SERVER_ERROR = 500;
 
 }

@@ -39,6 +39,7 @@
                     <option value="PayPal" disabled>PayPal is not yet available</option>
                 </select>
 
+
                 <div class="flex justify-end">
                     <button type="submit" id="confirm-payment-btn"
                         class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors w-full md:w-auto">
@@ -57,6 +58,7 @@
         $date = isset($paymentInfo['created_at'])
             ? date('M j, Y', strtotime($paymentInfo['created_at']))
             : date('M j, Y');
+        $receiptUrl = $paymentInfo['receipt_url'] ?? null;
 
 
         $isPending = $status === 'Pending';
@@ -116,12 +118,31 @@
                     <?php endif; ?>
                 </div>
 
-                <?php if ($paymentInfo['status'] === 'Expired'): ?>
-                    <div class="flex justify-between">
-                        <button type="button" id="new-payment"
-                            class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors ">
-                            Pay again
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <?php if ($receiptUrl): ?>
+                        <button onclick="window.open('<?= htmlspecialchars($receiptUrl) ?>', '_blank')"
+                            class="inline-flex items-center bg-sky-300 gap-2 hover:bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-receipt text-lg"></i>
+                            <span>View Receipt</span>
+                            <i class="fas fa-external-link-alt text-sm"></i>
                         </button>
+                    <?php endif; ?>
+
+                    <?php if ($paymentInfo['status'] === 'Expired'): ?>
+                        <button type="button" id="new-payment"
+                            class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-credit-card text-lg"></i>
+                            <span>Pay Again</span>
+                        </button>
+                    <?php endif; ?>
+                </div>
+
+                <?php if (!$receiptUrl && !$isPending): ?>
+                    <div class="mt-4 p-3 bg-yellow-500/20 border border-yellow-500 rounded-lg">
+                        <p class="text-yellow-400 text-sm">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            No receipt uploaded yet. Please upload your payment receipt.
+                        </p>
                     </div>
                 <?php endif; ?>
             </div>
