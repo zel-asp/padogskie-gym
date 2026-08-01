@@ -8,4 +8,4 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // Attach to window
 window.supabase = supabaseClient;
 
-console.log('Supabase initialized:', window.supabase ? '✅' : '❌');
+console.log('Supabase initialized:', window.supabase ? '/' : 'hihi');
